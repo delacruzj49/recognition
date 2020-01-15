@@ -12,7 +12,8 @@ faceCascade = cv2.CascadeClassifier(cascPath)
 
 
 #read every single frame and asign name file and run thru for loop
-files = glob.glob (" ") # Insert path to directory with decomposed frames
+files = glob.glob (" /*.jpg") #insert path to file containing video decomposed frames
+count=0
 for myFile in files:
     print(myFile)
     # Read the image
@@ -36,8 +37,26 @@ for myFile in files:
         cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
     cv2.imshow("Faces found", image)
+
+    cv2.imwrite("pics/frame%d.jpg"% count ,image) #This will write images to a file
+    count= count + 1
     #cv2.waitKey(0)  only for images not for frames
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-#out = cv2.VideoWriter('outpy.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
+
+#Loading images and making it into a video
+
+img_array = []
+for filename in glob.glob("/*.jpg"): #load file with images that have been written to make a video
+    img = cv2.imread(filename)
+    height, width, layers = img.shape
+    size = (width,height)
+    img_array.append(img)
+
+
+out = cv2.VideoWriter('project.avi',cv2.VideoWriter_fourcc(*'DIVX'), 24, size) #will produce a video from the images
+
+for i in range(len(img_array)):
+    out.write(img_array[i])
+out.release()
